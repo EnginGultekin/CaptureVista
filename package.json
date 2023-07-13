@@ -1,0 +1,26 @@
+{
+  "name": "capturevista",
+  "version": "1.0.0",
+  "description": "Enchanting Moments in Frames",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EnginGultekin/CaptureVista.git"
+  },
+  "keywords": [
+    "photo",
+    "app"
+  ],
+  "author": "Engin Gültekin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EnginGultekin/CaptureVista/issues"
+  },
+  "homepage": "https://github.com/EnginGultekin/CaptureVista#readme",
+  "devDependencies": {
+    "prettier": "3.0.0"
+  }
+}
