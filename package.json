@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "Enchanting Moments in Frames",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,10 @@
   },
   "homepage": "https://github.com/EnginGultekin/CaptureVista#readme",
   "devDependencies": {
+    "nodemon": "^3.0.1",
     "prettier": "3.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
   }
 }
