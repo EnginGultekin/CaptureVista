@@ -1,27 +1,32 @@
 import express from "express";
-import ejs from 'ejs';
-import { fileURLToPath } from 'url';
-import path, { dirname } from 'path';
+import ejs from 'ejs'; //view engine
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const app = express();
 
 //Template Engine
 app.set("view engine", "ejs");
 
 // Middlewares
-app.use(express.static('public'))
+app.use(express.static('public')) // We chose the folder where we will put the static files
+app.use(express.urlencoded({extended:true}))  // Body parser
+app.use(express.json())
 
 // Routes
 app.get('/', (req, res) => {
     res.render("index");
 })
+
 app.get('/about', (req, res) => {
     res.render("about");
 })
+
 app.get('/add_post', (req, res) => {
     res.render("add_post");
+})
+
+app.post('/photos', (req, res) => {
+    console.log(req.body);
+    res.redirect('/');
 })
 
 const port = 3000;
