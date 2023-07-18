@@ -31,11 +31,16 @@ app.get('/about', (req, res) => {
     res.render("about");
 })
 
-app.get('/add_post', (req, res) => {
-    res.render("add_post");
+app.get('/add', (req, res) => {
+    res.render("add");
 })
 
-app.post('/photos', async (req, res) => {
+app.get('/photos/:id', async (req, res) => {
+    const photo = await Photo.findById({ _id: req.params.id })
+    res.render("photo", { photo });
+})
+
+app.post('/create_photo', async (req, res) => {
     await Photo.create(req.body);
     res.redirect('/');
 })
