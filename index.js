@@ -26,7 +26,9 @@ app.use(express.static('public')) // We chose the folder where we will put the s
 app.use(express.urlencoded({ extended: true }))  // Body parser 
 app.use(express.json())
 app.use(fileUpload())
-app.use(methodOverride('_method', 'POST', 'GET'))
+app.use(methodOverride('_method', {
+    methods: ['POST', 'GET']
+}))
 
 // Routes
 app.get('/', async (req, res) => {
@@ -82,7 +84,13 @@ app.put('/photos/:id', async (req, res) => {
     res.redirect(`/photos/${photo._id}`);
 })
 
-
+app.delete('/photos/:id', async (req, res) => {
+    const photo = await Photo.findOne({ _id: req.params.id });
+    let deletedImage = __dirname + '/public' + photo.image;
+    fs.unlinkSync(deletedImage);
+    await Photo.findByIdAndRemove(photo._id);
+    res.redirect('/');
+});
 
 const port = 3000;
 app.listen(port, () => {

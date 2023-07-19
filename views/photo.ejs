@@ -39,8 +39,12 @@ https://templatemo.com/tm-552-video-catalog
                             <div class="col-xl-8 col-lg-7">
                                 <!-- Video description -->
                                 <div class="tm-video-description-box">
-                                    <h2 class="mb-5 tm-video-title"><%= photo.title %></h2>
-                                    <p class="mb-4"><%= photo.description %></p>
+                                    <h2 class="mb-5 tm-video-title">
+                                        <%= photo.title %>
+                                    </h2>
+                                    <p class="mb-4">
+                                        <%= photo.description %>
+                                    </p>
                                 </div>
                             </div>
                             <div class="col-xl-4 col-lg-5">
@@ -52,7 +56,8 @@ https://templatemo.com/tm-552-video-catalog
                                                 Details</span></a>
                                     </div>
                                     <div class="text-center">
-                                        <a
+                                        <a href="/photos/<%= photo._id %>?_method=DELETE"
+                                            onclick="return confirm('Are You Sure You Want to Delete?')"
                                             class="btn btn-danger p-0 tm-btn-animate tm-btn-download tm-icon-download"><span>Delete
                                                 Photo</span></a>
                                     </div>
