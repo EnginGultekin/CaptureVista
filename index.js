@@ -1,22 +1,15 @@
 import express from "express";
 import dotenv from 'dotenv'
 import mongoose from "mongoose";
-import Photo from "./models/Photo.js";
 import fileUpload from "express-fileupload";
 import methodOverride from "method-override";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import ejs from 'ejs'; //view engine
-import fs from 'fs';
+import photoController from './controllers/photoController.js';
+import pageController from './controllers/pageController.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+
 const app = express();
 dotenv.config();
-
-mongoose.connect(process.env.DB_CONNECTION_STRING)
-    .then(() => console.log('Connnected DB'))
-    .catch((error) => console.log(error));
 
 //Template Engine
 app.set("view engine", "ejs");
@@ -31,68 +24,21 @@ app.use(methodOverride('_method', {
 }))
 
 // Routes
-app.get('/', async (req, res) => {
-    const photos = await Photo.find({}).sort('-dateCreated');
-    res.render("index", {
-        photos,
-    });
-})
+app.get('/', photoController.getAllPhotos);
+app.get('/photos/:id', photoController.getPhoto);
+app.post('/photos', photoController.createPhoto);
+app.put('/photos/:id', photoController.updatePhoto);
+app.delete('/photos/:id', photoController.deletePhoto);
 
-app.get('/about', (req, res) => {
-    res.render("about");
-})
+app.get('/about', pageController.getAboutPage);
+app.get('/add', pageController.getAddPage);
+app.get('/photos/edit/:id', pageController.getEditPage);
 
-app.get('/add', (req, res) => {
-    res.render("add");
-})
-
-app.get('/photos/:id', async (req, res) => {
-    const photo = await Photo.findById({ _id: req.params.id })
-    res.render("photo", { photo });
-})
-
-app.post('/create_photo', async (req, res) => {
-
-    const uploadDir = 'public/uploads';
-    if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir);
-    }
-
-    const uploadImage = req.files.image;
-    const uploadPath = __dirname + '/public/uploads/' + uploadImage.name;
-
-    uploadImage.mv(uploadPath, async () => {
-        await Photo.create({
-            ...req.body,
-            image: '/uploads/' + uploadImage.name,
-        })
-    });
-    res.redirect('/');
-})
-
-app.get('/photos/edit/:id', async (req, res) => {
-    const photo = await Photo.findOne({ _id: req.params.id });
-    res.render('edit', { photo })
-})
-
-app.put('/photos/:id', async (req, res) => {
-    const photo = await Photo.findOne({ _id: req.params.id })
-    photo.title = req.body.title;
-    photo.description = req.body.description;
-    photo.save();
-
-    res.redirect(`/photos/${photo._id}`);
-})
-
-app.delete('/photos/:id', async (req, res) => {
-    const photo = await Photo.findOne({ _id: req.params.id });
-    let deletedImage = __dirname + '/public' + photo.image;
-    fs.unlinkSync(deletedImage);
-    await Photo.findByIdAndRemove(photo._id);
-    res.redirect('/');
-});
 
 const port = 3000;
 app.listen(port, () => {
-    console.log(`Server started on port ${port}...`);
+    //console.log(`Server started on port ${port}...`);
+    mongoose.connect(process.env.DB_CONNECTION_STRING)
+        .then(() => console.log('Connnected DB'))
+        .catch((error) => console.log(error));
 });
