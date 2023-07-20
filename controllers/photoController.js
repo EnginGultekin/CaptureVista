@@ -6,10 +6,23 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const getAllPhotos = async (_, res) => {
-    const photos = await Photo.find({}).sort('-dateCreated');
+const getAllPhotos = async (req, res) => {
+    // Our start page or first page.
+    const page = req.query.page || 1;
+    // Number of photos on each page
+    const photosPerPage = 3;
+    // Total number of photos
+    const totalPhoto = await Photo.find().countDocuments();
+
+    const photos = await Photo.find({})     // We get all the photos 
+        .sort("-dateCreated")   // We sort the photos
+        .skip((page - 1) * photosPerPage)   // Allows Discarding Used by Pages 
+        .limit(photosPerPage)   // We limit the number of F.s I want on each page.
+
     res.render("index", {
-        photos,
+        photos: photos,  // Photos we limit by page
+        current: page,   // The highlighted page
+        pages: Math.ceil(totalPhoto / photosPerPage),  // Total number of pages
     });
 };
 
@@ -23,12 +36,13 @@ const createPhoto = async (req, res) => {
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
     }
+    const now = Date.now();
     const uploadImage = req.files.image;
-    const uploadPath = __dirname + '/../public/uploads/' + uploadImage.name;
+    const uploadPath = __dirname + '/../public/uploads/' + now + '-' + uploadImage.name;
     uploadImage.mv(uploadPath, async () => {
         await Photo.create({
             ...req.body,
-            image: '/uploads/' + uploadImage.name,
+            image: '/uploads/' + now + '-' + uploadImage.name,
         })
     });
     res.redirect('/');
@@ -38,8 +52,8 @@ const updatePhoto = async (req, res) => {
     const photo = await Photo.findOne({ _id: req.params.id })
     photo.title = req.body.title;
     photo.description = req.body.description;
-    photo.save();
 
+    await photo.save();
     res.redirect(`/photos/${photo._id}`);
 };
 
